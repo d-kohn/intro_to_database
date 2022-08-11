@@ -15,9 +15,9 @@ def main():
 #    question_5(conn)
 #    question_6(conn)
 #    question_7(conn)
-    question_8(conn)
+#    question_8(conn)
 #    question_9(conn)
-#    question_10(conn)
+    question_10(conn)
 
 def question_1(conn):
     print("What are the average on track, on-time, five-year graduation rates by district?\n")
@@ -46,18 +46,14 @@ def question_2(conn):
 
 def question_3(conn):
     print("How many students are in each high school and how many are in SPED?")
-    query = "SELECT s.name, s.students, TO_CHAR(s.sped*100, 'fm99%') as sped, CAST(s.students * s.sped AS int) as sped_students FROM school s, district d WHERE s.district_id = d.id AND d.name = 'Portland SD 1J' AND s.schooltype = (SELECT st.type FROM schooltype st WHERE st.name = 'High School');"
-    results_headers = ['Name', 'Students', 'SPED % ', 'SPED Students']
+    query = "SELECT s.name, s.students, CAST(s.students * s.sped AS int) as sped_students FROM school s, district d WHERE s.district_id = d.id AND d.name = 'Portland SD 1J' AND s.schooltype = (SELECT st.type FROM schooltype st WHERE st.name = 'High School');"
+    results_headers = ['Name', 'Students', 'SPED Students']
     records = runQuery(conn, query)
     displayQuery(records, results_headers)
     # Visualization
-    query = "SELECT s.name, s.students, CAST(s.students * s.sped AS int) FROM school s, district d WHERE s.district_id = d.id AND d.name = 'Portland SD 1J' AND s.schooltype = (SELECT st.type FROM schooltype st WHERE st.name = 'High School');"
-    results_headers = ['Name', 'Students', 'SPED Students']
-    records = runQuery(conn, query)
     labels = ['School', 'Students and SPED Students', "SPED students and total students in Portland high schools"]
     legend = ['Total students', 'SPED students']    
     visualizeQueryBargraph(records, results_headers, labels, legend)
-
 
 def question_4(conn):
     print("Which High Schools have grades lower than 9th Grade and which grades do they have?\n")
@@ -94,12 +90,19 @@ def question_8(conn):
     records = runQuery(conn, query)
     displayQuery(records, results_headers)
     
-
 def question_9(conn):
-    pass
+    print("What school districts have more than one high school?\n")
+    query = "SELECT d.name, COUNT(s.id) FROM school s, district d, schooltype st WHERE s.district_id = d.id AND s.schooltype = st.type AND st.name = 'High School' GROUP BY d.name HAVING COUNT(s.id) > 1;"
+    results_headers = ['District','High Schools']
+    records = runQuery(conn, query)
+    displayQuery(records, results_headers)   
 
 def question_10(conn):
-    pass
+    print("How many middle schools in Washington county have more than 10 languages and what district are the in?\n")
+    query = "SELECT s.name, d.name, s.languages FROM schooltype st, county c, district d, districtcountyrel dcr, school s WHERE s.languages > 10 AND s.district_id = d.id AND d.id = dcr.district_id AND dcr.county_id = c.id AND c.name = 'Washington' AND s.schooltype = st.type AND st.name = 'Middle School';"
+    results_headers = ['School', 'District','Languages']
+    records = runQuery(conn, query)
+    displayQuery(records, results_headers)   
 
 
 
