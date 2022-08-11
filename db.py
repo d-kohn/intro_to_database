@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Uncomment a question to observe its output
 def main():
     conn = initialize() 
 #    question_1(conn)
@@ -17,7 +18,7 @@ def main():
 #    question_7(conn)
 #    question_8(conn)
 #    question_9(conn)
-    question_10(conn)
+#    question_10(conn)
 
 def question_1(conn):
     print("What are the average on track, on-time, five-year graduation rates by district?\n")
